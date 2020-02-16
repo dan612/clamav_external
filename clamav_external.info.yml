@@ -1,0 +1,7 @@
+name: ClamAV External Virus Scanning
+type: module
+description: 'Allows scanning of files on an external server'
+package: Custom
+core: 8.x
+dependencies:
+  - drupal:file

@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @file
+ * clamav_external.module
+ */
+
+use Drupal\file\FileInterface;
+
+/**
+ * Implements hook_entity_create().
+ *
+ * Scan all entities that use Drupal\file\FileInterface.
+ */
+function clamav_external_file_validate(FileInterface $file) {
+  $errors = [];
+
+  if (!$file) {
+    // File not detected - bail out.
+    return $errors;
+  }
+
+  $scanner = \Drupal::service('clamav_external.connector');
+  $response = $scanner->scanFileOnExternalHost($file->getFileUri());
+
+  // Response is either INFECTED, CLEAN, or Could not detect.
+  if ($response->getBody()->__toString() == "INFECTED") {
+    \Drupal::logger('clamav_external')->notice(t('@filename is infected', ['@filename' => $file->getFilename()]));
+    $errors[] = t("File is infected. Upload prevented.");
+    return $errors;
+  }
+  elseif ($response->getBody()->__toString() == "CLEAN") {
+    \Drupal::logger('clamav_external')->notice(t('@filename is clean', ['@filename' => $file->getFilename()]));
+  }
+  else {
+    \Drupal::logger('clamav_external')->notice(t('@filename could not be scanned', ['@filename' => $file->getFilename()]));
+    $errors[] = t("Virus scanning errored, could not scan.");
+  }
+  return $errors;
+
+}

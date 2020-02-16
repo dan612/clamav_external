@@ -1,0 +1,7 @@
+clamav_external.settings:
+  path: 'admin/clamav-external/settings'
+  defaults:
+    _form: '\Drupal\clamav_external\Form\ClamavExternalConfigForm'
+    _title: 'Clamav External Settings'
+  requirements:
+    _permission: 'administer site configuration'

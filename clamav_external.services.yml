@@ -1,0 +1,4 @@
+services:
+  clamav_external.connector:
+    class: Drupal\clamav_external\ClamavExternalConnector
+    arguments: ['@config.factory', '@http_client']
